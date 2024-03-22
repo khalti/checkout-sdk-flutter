@@ -1,0 +1,41 @@
+name: Analyze, Run Tests & Generate Coverage
+
+on: 
+ - push
+ - pull_request
+
+jobs:
+  coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out current repository
+        uses: actions/checkout@v3
+
+      - name: Setup Flutter Stable
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      - name: Setup melos
+        run: dart pub global activate melos
+
+      - name: Get package dependencies
+        run: melos bs
+
+      - name: Analyze packages
+        run: melos analyze
+
+      - name: Run tests and generate coverage for the khalti_checkout_core
+        run: flutter test --coverage
+        working-directory: packages/khalti_checkout_core
+
+      - name: Upload coverage to Codecov
+        uses: codecov/codecov-action@v3
+        with:
+          token: ${{secrets.CODECOV_TOKEN}}
+          files: ./packages/khalti_checkout_core/coverage/lcov.info
+          name: khalti-coverage
+          fail_ci_if_error: true
+          verbose: true
