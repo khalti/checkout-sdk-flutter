@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://raw.githubusercontent.com/khalti/khalti-flutter-sdk/master/assets/khalti_logo.png" height="100" alt="Khalti Payment Gateway" />
+<img src="https://raw.githubusercontent.com/khalti/checkout-sdk-flutter/main/assets/khalti_logo.png" height="100" alt="Khalti Payment Gateway" />
 </p>
 
 <p align="center">
@@ -7,10 +7,10 @@
 </p>
 
 <p align="center">
-<a href="https://pub.dartlang.org/packages/khalti_core"><img src="https://img.shields.io/pub/v/khalti_core" alt="Pub"></a>
+<a href="https://pub.dartlang.org/packages/khalti_checkout_core"><img src="https://img.shields.io/pub/v/khalti_checkout_core.svg" alt="Pub"></a>
 <a href="https://docs.khalti.com/"><img src="https://img.shields.io/badge/Khalti-Docs-blueviolet" alt="Khalti Docs"></a>
-<a href="https://github.com/khalti/khalti-flutter-sdk/blob/master/LICENSE"><img src="https://img.shields.io/badge/License-BSD--3-informational" alt="BSD-3 License"></a>
-<a href="https://github.com/khalti/khalti-flutter-sdk/issues"><img src="https://img.shields.io/github/issues/khalti/khalti-flutter-sdk" alt="GitHub issues"></a>
+<a href="https://github.com/khalti/checkout-sdk-flutter/blob/main/LICENSE"><img src="https://img.shields.io/badge/License-BSD--3-informational" alt="BSD-3 License"></a>
+<a href="https://github.com/khalti/checkout-sdk-flutter/issues"><img src="https://img.shields.io/github/issues/khalti/checkout-sdk-flutter" alt="GitHub issues"></a>
 <a href="https://khalti.com"><img src="https://img.shields.io/website?url=https%3A%2F%2Fdocs.khalti.com" alt="Website"></a>
 <a href="https://www.facebook.com/khalti.official"><img src="https://img.shields.io/badge/follow--000?style=social&logo=facebook" alt="Follow Khalti in Facebook"></a>
 <a href="https://www.instagram.com/khaltiofficial"><img src="https://img.shields.io/badge/follow--000?style=social&logo=instagram" alt="Follow Khalti in Instagram"></a>
@@ -21,6 +21,4 @@
 ---
 
 The core package for Khalti Payment Gateway that handles client requests. This package should not be used 
-directly unless developer wants low level access to the APIs. For most cases, prefer using either 
-[khalti_flutter](https://pub.dev/packages/khalti_flutter) or [khalti](https://pub.dev/packages/khalti),
-which is a high level wrapper over this core package.
+directly unless developer wants low level access to the APIs. For most cases, prefer using [khalti_checkout_flutter](https://pub.dev/packages/khalti_checkout_flutter).
