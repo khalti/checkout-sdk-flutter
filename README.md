@@ -36,8 +36,8 @@ The repository hosts two packages:
 
 Payment Solutions             | Package Name    | Version                                                                                                                | Description                                                      | Use Case
 ---------------------------   | -------------   | ---------------------------------------------------------------------------------------------------------------------  | --------------------------------------------------------------   | --------------------------------------------------------------------------------------
-Payment API only              | khalti_core     | [![khalti_core](https://img.shields.io/pub/v/khalti_core.svg)](https://pub.dartlang.org/packages/khalti_core)          | Low level abstraction over Khalti REST API                       | for Dart only project & using custom dependencies. e.g. using `dio` instead of `http`
-Quick Integration SDK with UI | khalti_flutter  | [![khalti_flutter](https://img.shields.io/pub/v/khalti_flutter.svg)](https://pub.dartlang.org/packages/khalti_flutter) | Includes everything that khalti_core offers, along with UI       | Recommended one, a plug-and-play solution with limited customization
+Payment API only              | khalti_checkout_core     | [![khalti_checkout_core](https://img.shields.io/pub/v/khalti_checkout_core.svg)](https://pub.dartlang.org/packages/khalti_checkout_core)          | Low level abstraction over Khalti REST API                       | for Dart only project & using custom dependencies. e.g. using `dio` instead of `http`
+Quick Integration SDK with UI | khalti_checkout_flutter  | [![khalti_checkout_flutter](https://img.shields.io/pub/v/khalti_checkout_flutter.svg)](https://pub.dartlang.org/packages/khalti_checkout_flutter) | Includes everything that khalti_checkout_core offers, along with UI       | Recommended one, a plug-and-play solution with limited customization
 
 
 ## Features
@@ -68,6 +68,6 @@ _**Contact Our Merchant Support**_
 
 _**Contact Our Technical Team**_
 * Mobile (Viber / Whatsapp): 9843007232
-* Email / Skype: sashant@khalti.com
+* Email / Skype: saphal.shrestha@khalti.com
 
 (For payment gateway integration support.)
