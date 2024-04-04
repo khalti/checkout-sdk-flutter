@@ -8,6 +8,7 @@ import 'package:khalti_checkout_core/khalti_checkout_core.dart';
 import 'package:khalti_checkout_flutter/src/data/core/exception_handler.dart';
 import 'package:khalti_checkout_flutter/src/data/khalti_http_client.dart';
 import 'package:khalti_checkout_flutter/src/widget/khalti_webview.dart';
+import 'package:meta/meta.dart';
 
 export 'package:khalti_checkout_core/khalti_checkout_core.dart';
 
@@ -104,14 +105,19 @@ class Khalti extends Equatable {
     );
   }
 
-  static bool _hasPopped = false;
+  @internal
+
+  /// Helper boolean value to indicate if the webpage has been popped already to avoid multiple pops.
+  ///
+  /// Avoid using it outside of this library.
+  static bool hasPopped = false;
 
   /// A http [service] to make requests to Khalti APIs.
   static KhaltiService get service => _service;
 
   /// Method to load webview to be able to make payment.
   void open(BuildContext context) {
-    _hasPopped = false;
+    hasPopped = false;
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -137,8 +143,8 @@ class Khalti extends Equatable {
 
   /// Helper method to close the webview.
   void close(BuildContext context) {
-    if (!_hasPopped) {
-      _hasPopped = true;
+    if (!hasPopped) {
+      hasPopped = true;
       Navigator.pop(context);
     }
   }
