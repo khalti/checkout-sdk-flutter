@@ -104,12 +104,15 @@ class _KhaltiWebViewClient extends StatelessWidget {
     final payConfig = khalti.payConfig;
     final isProd = payConfig.environment == Environment.prod;
     return KhaltiPopScope(
-      onPopInvoked: (_) => khalti.onMessage(
-        event: KhaltiEvent.kpgDisposed,
-        description: s_kpgDisposed,
-        needsPaymentConfirmation: true,
-        khalti,
-      ),
+      onPopInvoked: (_) {
+        Khalti.hasPopped = true;
+        return khalti.onMessage(
+          event: KhaltiEvent.kpgDisposed,
+          description: s_kpgDisposed,
+          needsPaymentConfirmation: true,
+          khalti,
+        );
+      },
       child: InAppWebView(
         onLoadStop: (controller, webUri) async {
           showLinearProgressIndicator.value = false;
@@ -165,6 +168,7 @@ class _KhaltiWebViewClient extends StatelessWidget {
           useHybridComposition: true,
           clearCache: true,
           cacheEnabled: false,
+          cacheMode: CacheMode.LOAD_NO_CACHE,
         ),
         initialUrlRequest: URLRequest(
           url: WebUri.uri(
