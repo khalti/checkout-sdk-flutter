@@ -62,7 +62,7 @@ Read the steps to integrate Khalti Payment Gateway in details [here](https://doc
 # Supported Platforms
 Android | iOS | Web | Desktop (macOS, Linux, Windows)
 :-----: | :-: | :-: | :-----------------------------:
-  ✔️    |  ✔️ |  ✔️ |                ❌
+  ✔️    |  ✔️ |  ❌ |                ❌
 
 # Setup
 Detailed setup for each platform.
