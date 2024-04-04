@@ -22,7 +22,7 @@ class _KhaltiSDKDemoState extends State<KhaltiSDKDemo> {
   late final Future<Khalti?> khalti;
 
   String pidx =
-      'uY9XEYiNhfBjcPBBbmnA2g'; // Should be generated via a server-side POST request.
+      'ZyzCEMLFz2QYFYfERGh8LE'; // Should be generated via a server-side POST request.
 
   PaymentResult? paymentResult;
 
@@ -30,7 +30,8 @@ class _KhaltiSDKDemoState extends State<KhaltiSDKDemo> {
   void initState() {
     super.initState();
     final payConfig = KhaltiPayConfig(
-      publicKey: 'live_public_key_979320ffda734d8e9f7758ac39ec775f',
+      publicKey:
+          'live_public_key_979320ffda734d8e9f7758ac39ec775f', // This is a dummy public key for example purpose
       pidx: pidx,
       returnUrl: Uri.parse('https://docs.khalti.com/khalti-epayment/'),
       environment: Environment.test,
