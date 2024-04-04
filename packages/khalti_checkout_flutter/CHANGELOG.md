@@ -1,3 +1,9 @@
+# [1.0.0-dev.4] - Apr 4, 2024
+**Pre-release**
+- Update caching policy to avoid occasional issue when loading khalti payment page.
+- Solve an issue where the flutter framework threw an exception when popping out of the khalti payment page.
+- Make minor fix in khalti doc
+  
 # [1.0.0-dev.3] - Apr 2, 2024
 **Pre-release**
 - Fixed broken links in README.
