@@ -30,29 +30,30 @@ class _KhaltiWebViewState extends State<KhaltiWebView> {
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: ValueListenableBuilder(
-        valueListenable: showLinearProgressIndicator,
-        builder: (_, value, __) {
-          return Scaffold(
-            appBar: kIsWeb
-                ? null
-                : AppBar(
-                    title: const Text(s_payWithKhalti),
-                    actions: [
-                      IconButton(
-                        onPressed: _reload,
-                        icon: const Icon(Icons.refresh),
-                      )
-                    ],
-                    bottom: value
-                        ? const _LinearLoadingIndicator(
-                            color: Colors.deepPurple,
-                          )
-                        : null,
-                    elevation: 4,
-                  ),
-            body: StreamBuilder(
+    return ValueListenableBuilder(
+      valueListenable: showLinearProgressIndicator,
+      builder: (_, value, __) {
+        return Scaffold(
+          appBar: kIsWeb
+              ? null
+              : AppBar(
+                  title: const Text(s_payWithKhalti),
+                  actions: [
+                    IconButton(
+                      onPressed: _reload,
+                      icon: const Icon(Icons.refresh),
+                    )
+                  ],
+                  bottom: value
+                      ? const _LinearLoadingIndicator(
+                          color: Colors.deepPurple,
+                        )
+                      : null,
+                  elevation: 4,
+                ),
+          body: SafeArea(
+            top: false,
+            child: StreamBuilder(
               stream: connectivityUtil.internetConnectionListenableStatus,
               builder: (context, snapshot) {
                 if (!snapshot.hasData) return const SizedBox.shrink();
@@ -70,9 +71,9 @@ class _KhaltiWebViewState extends State<KhaltiWebView> {
                 }
               },
             ),
-          );
-        },
-      ),
+          ),
+        );
+      },
     );
   }
 
