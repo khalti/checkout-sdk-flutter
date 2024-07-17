@@ -1,2 +1,2 @@
 export 'payment_result.dart';
-export 'payment_verification_response_model.dart';
+export 'payment_detail_model.dart';
