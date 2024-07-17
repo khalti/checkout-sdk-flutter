@@ -45,7 +45,7 @@ void main() {
 
           expect(
             response,
-            isA<PaymentVerificationResponseModel>()
+            isA<PaymentPayload>()
                 .having((model) => model.pidx, 'pidx', 'eBjn5R4iUB82JnKCHjE7eG')
                 .having((model) => model.totalAmount, 'Total Amount', 1000)
                 .having((model) => model.status, 'Status', 'Pending')
@@ -57,6 +57,19 @@ void main() {
                   'Ax12NiopxWpalol7rI',
                 ),
           );
+        },
+      );
+
+      test(
+        'fetchPaymentDetail() : success',
+        () async {
+          mockClient.response = HttpResponse.success(
+            data: {"return_url": "https://xyz.com/"},
+            statusCode: 200,
+          );
+          final response = await service.fetchPaymentDetail('pidx-1234');
+
+          expect(response, isA<PaymentDetailModel>().having((model) => model.returnUrl, 'return url', 'https://xyz.com/'));
         },
       );
     },
@@ -96,7 +109,7 @@ void main() {
 
               expect(
                 logs.contains(
-                  '[POST] https://khalti.com/api/v2/epayment/lookup/',
+                  '[POST] https://khalti.com/api/v2/epayment/lookup-sdk/',
                 ),
                 true,
               );
