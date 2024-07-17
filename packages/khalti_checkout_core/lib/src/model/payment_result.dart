@@ -6,46 +6,90 @@ class PaymentResult extends Equatable {
   ///
   /// The result after making either a successful or unsuccessful payment.
   const PaymentResult({
-    required this.status,
     this.payload,
   });
-
-  /// A string representation of payment status.
-  final String status;
 
   /// Payload regarding the product purchased.
   final PaymentPayload? payload;
 
   @override
-  List<Object?> get props => [status, payload];
+  List<Object?> get props => [payload];
 
   @override
   bool get stringify => true;
 }
 
-/// Extra information passed as payload to [PaymentResult].
+/// Response model for payment verification lookup.
 class PaymentPayload extends Equatable {
-  /// Constructor for [PaymentPayload]
-  ///
-  /// Extra information passed as payload to [PaymentResult].
+  /// Default constructor for [PaymentPayload].
   const PaymentPayload({
-    required this.pidx,
-    required this.amount,
+    this.pidx,
+    this.totalAmount = 0,
+    required this.status,
     required this.transactionId,
+    this.fee = 0,
+    this.refunded = false,
+    this.purchaseOrderId,
+    this.purchaseOrderName,
+    this.extraMerchantParams,
   });
 
-  /// Unique produt identifier.
-  final String pidx;
+  /// The product idx for the associated payment.
+  final String? pidx;
 
-  /// The amount associated with the product when the payment is made.
-  final int amount;
+  /// Total Amount associated with the payment made.
+  final int totalAmount;
 
-  /// Unique transaction id for the transaction carried out.
-  final String transactionId;
+  /// The transaction status for the payment made.
+  ///
+  /// Can be: Completed, Pending, Failed, Initiated, Refunded or Expired
+  final String? status;
+
+  /// Unique transaction id.
+  final String? transactionId;
+
+  /// The service charge for the payment.
+  final int fee;
+
+  /// Denotes if refund was made in case of any failure.
+  final bool refunded;
+
+  /// The id associated with the purchased item.
+  final String? purchaseOrderId;
+
+  /// The name associated with the purchased item.
+  final String? purchaseOrderName;
+
+  /// Extra information associated with the merchant making the payment.
+  final Map<String, dynamic>? extraMerchantParams;
 
   @override
-  List<Object?> get props => [pidx, amount, transactionId];
+  List<Object?> get props {
+    return [
+      pidx,
+      totalAmount,
+      status,
+      transactionId,
+      fee,
+      refunded,
+      purchaseOrderId,
+      purchaseOrderName,
+      extraMerchantParams,
+    ];
+  }
 
-  @override
-  bool get stringify => true;
+  /// Factory to create [PaymentPayload] instance from [map].
+  factory PaymentPayload.fromJson(Map<String, dynamic> map) {
+    return PaymentPayload(
+      pidx: map['pidx'] as String?,
+      totalAmount: map['total_amount'] as int,
+      status: map['status'] as String?,
+      transactionId: map['transaction_id'] as String?,
+      fee: map['fee'] as int,
+      refunded: map['refunded'] as bool,
+      purchaseOrderId: map['purchase_order_id'] as String?,
+      purchaseOrderName: map['purchase_order_name'] as String?,
+      extraMerchantParams: map['extra_merchant_params'] as Map<String, dynamic>?,
+    );
+  }
 }
