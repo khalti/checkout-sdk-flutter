@@ -157,9 +157,7 @@ class _KhaltiWebViewClient extends StatelessWidget {
               final pidx = payConfig.pidx;
 
               return handlePaymentVerificationException(
-                caller: () {
-                  return Khalti.service.verify(pidx, isProd: isProd);
-                },
+                caller: () => Khalti.service.verify(pidx, isProd: isProd),
                 onPaymentResult: khalti.onPaymentResult,
                 onMessage: khalti.onMessage,
                 khalti: khalti,
