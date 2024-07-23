@@ -26,79 +26,84 @@ class KhaltiWebView extends StatefulWidget {
 
 class _KhaltiWebViewState extends State<KhaltiWebView> {
   Future<PaymentDetailModel>? paymentDetail;
+  final webViewControllerCompleter = Completer<InAppWebViewController>();
+  final showLinearProgressIndicator = ValueNotifier(true);
+
   @override
   void initState() {
     super.initState();
     paymentDetail = widget.khalti.fetchPaymentDetail();
   }
 
-  final webViewControllerCompleter = Completer<InAppWebViewController>();
-  ValueNotifier<bool> showLinearProgressIndicator = ValueNotifier(true);
-
   @override
   Widget build(BuildContext context) {
-    return ValueListenableBuilder(
-      valueListenable: showLinearProgressIndicator,
-      builder: (_, value, __) {
-        return Scaffold(
-          appBar: kIsWeb
-              ? null
-              : AppBar(
-                  title: const Text(s_payWithKhalti),
-                  actions: [
-                    IconButton(
-                      onPressed: _reload,
-                      icon: const Icon(Icons.refresh),
-                    )
-                  ],
-                  bottom: value
-                      ? const _LinearLoadingIndicator(
-                          color: Colors.deepPurple,
-                        )
-                      : null,
-                  elevation: 4,
-                ),
-          body: SafeArea(
-            top: false,
-            child: StreamBuilder(
-              stream: connectivityUtil.internetConnectionListenableStatus,
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) return const SizedBox.shrink();
+    return Scaffold(
+      appBar: kIsWeb
+          ? null
+          : AppBar(
+              title: const Text(s_payWithKhalti),
+              actions: [
+                IconButton(
+                  onPressed: _reload,
+                  icon: const Icon(Icons.refresh),
+                )
+              ],
+              elevation: 4,
+            ),
+      body: Column(
+        children: [
+          ValueListenableBuilder(
+            valueListenable: showLinearProgressIndicator,
+            builder: (_, showLoader, __) {
+              return showLoader ? const LinearProgressIndicator(color: Colors.deepPurple) : const SizedBox.shrink();
+            },
+          ),
+          Expanded(
+            child: SafeArea(
+              top: false,
+              child: StreamBuilder(
+                stream: connectivityUtil.internetConnectionListenableStatus,
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) return const SizedBox.shrink();
 
-                final connectionStatus = snapshot.data!;
+                  final connectionStatus = snapshot.data!;
 
-                switch (connectionStatus) {
-                  case InternetStatus.connected:
-                    return FutureBuilder<PaymentDetailModel>(
-                      future: paymentDetail,
-                      builder: (context, snapshot) {
-                        if (snapshot.connectionState == ConnectionState.done && snapshot.hasData) {
-                          return _KhaltiWebViewClient(
-                            showLinearProgressIndicator: showLinearProgressIndicator,
-                            webViewControllerCompleter: webViewControllerCompleter,
-                            returnUrl: snapshot.data?.returnUrl,
-                          );
-                        }
-                        showLinearProgressIndicator.value = false;
-                        return const _KhaltiError(
-                          icon: Icon(Icons.error),
-                          errorMessage: 'Unable to load return_url',
-                          errorDescription: "There was an error setting up your payment. Please try again later.",
-                        );
-                      },
-                    );
-                  case InternetStatus.disconnected:
-                    return const _KhaltiError(
-                      icon: Icon(Icons.signal_wifi_statusbar_connected_no_internet_4),
-                      errorMessage: s_noInternet,
-                      errorDescription: s_noInternetDisplayMessage,
-                    );
-                }
-              },
+                  switch (connectionStatus) {
+                    case InternetStatus.connected:
+                      return FutureBuilder<PaymentDetailModel>(
+                        future: paymentDetail,
+                        builder: (context, snapshot) {
+                          if (snapshot.hasData) {
+                            return _KhaltiWebViewClient(
+                              showLinearProgressIndicator: showLinearProgressIndicator,
+                              webViewControllerCompleter: webViewControllerCompleter,
+                              returnUrl: snapshot.data?.returnUrl,
+                            );
+                          } else if (snapshot.hasError) {
+                            Future.microtask(() => showLinearProgressIndicator.value = false);
+                            return const _KhaltiError(
+                              icon: Icon(Icons.error),
+                              errorMessage: 'Unable to load return_url',
+                              errorDescription: "There was an error setting up your payment. Please try again later.",
+                            );
+                          }
+                          return const SizedBox.shrink();
+                        },
+                      );
+                    case InternetStatus.disconnected:
+                      Future.microtask(() => showLinearProgressIndicator.value = false);
+                      return const _KhaltiError(
+                        icon: Icon(Icons.signal_wifi_statusbar_connected_no_internet_4),
+                        errorMessage: s_noInternet,
+                        errorDescription: s_noInternetDisplayMessage,
+                      );
+                  }
+                },
+              ),
             ),
           ),
-        );
-      },
+        ],
+      ),
     );
   }
 
@@ -231,13 +236,13 @@ class _KhaltiError extends StatelessWidget {
                   Text(
                     errorMessage!,
                     style: const TextStyle(
-                      fontSize: 30,
+                      fontSize: 28,
                       fontWeight: FontWeight.w400,
                     ),
                   ),
                   if (errorDescription.isNotNull)
                     Padding(
-                      padding: const EdgeInsets.only(top: 10),
+                      padding: const EdgeInsets.fromLTRB(10, 10, 10, 0),
                       child: Text(errorDescription!),
                     ),
                 ],
@@ -246,11 +251,4 @@ class _KhaltiError extends StatelessWidget {
           )
         : const SizedBox.shrink();
   }
-}
-
-class _LinearLoadingIndicator extends LinearProgressIndicator implements PreferredSizeWidget {
-  const _LinearLoadingIndicator({super.color});
-
-  @override
-  Size get preferredSize => const Size(double.maxFinite, 4);
 }
