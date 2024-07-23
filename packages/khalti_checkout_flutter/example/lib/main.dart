@@ -101,9 +101,9 @@ class _KhaltiSDKDemoState extends State<KhaltiSDKDemo> {
                           Text(
                             'pidx: ${paymentResult!.payload?.pidx}',
                           ),
-                          Text('Status: ${paymentResult!.status}'),
+                          Text('Status: ${paymentResult!.payload?.status}'),
                           Text(
-                            'Amount Paid: ${paymentResult!.payload?.amount}',
+                            'Amount Paid: ${paymentResult!.payload?.totalAmount}',
                           ),
                           Text(
                             'Transaction ID: ${paymentResult!.payload?.transactionId}',
