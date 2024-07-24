@@ -1,3 +1,8 @@
+# [1.0.0-dev.4] - Jul 24, 2024
+**Pre-release**
+- Add a new model `PaymentDetailModel` that holds the `return_url`
+- Update `PaymentPayload` class to support extra properties
+
 # [1.0.0-dev.3] - Apr 2, 2024
 **Pre-release**
 - Fixed broken links in README.
