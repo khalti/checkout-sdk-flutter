@@ -28,13 +28,13 @@ enum KhaltiEvent {
   /// Event for when khalti payment page is disposed.
   kpgDisposed,
 
-  /// Event for when return url fails to load.
+  /// Event for when return url fails to load from the API.
   returnUrlLoadFailure,
 
   /// Event for when there's an exception when making a network call.
   networkFailure,
 
-  /// Event for when there's a HTTP failure when making a network call.
+  /// Event for when there's a HTTP failure when making a network call for verifying payment status.
   paymentLookupfailure,
 
   /// An unknown event.
@@ -58,9 +58,6 @@ typedef OnMessage = FutureOr<void> Function(
 
 /// Callback for when user is redirected to `return_url`.
 typedef OnReturn = FutureOr<void> Function();
-
-/// Typedef for `Future<PaymentVerificationLookupResponseModel>`.
-typedef VerificationLookup = Future<PaymentVerificationResponseModel>;
 
 /// The entrypoint class for Khalti.
 class Khalti extends Equatable {
@@ -128,10 +125,23 @@ class Khalti extends Equatable {
     );
   }
 
-  /// Helper method to call payment verification api.
+  /// Helper method to call payment verification API.
   Future<void> verify() async {
-    return handleException(
+    return handlePaymentVerificationException(
       caller: () => service.verify(
+        payConfig.pidx,
+        isProd: payConfig.environment == Environment.prod,
+      ),
+      onMessage: onMessage,
+      onPaymentResult: onPaymentResult,
+      khalti: this,
+    );
+  }
+
+  /// Helper method to call payment detail fetching API.
+  Future<PaymentDetailModel> fetchPaymentDetail() async {
+    return handleFetchDetailException(
+      caller: () => service.fetchPaymentDetail(
         payConfig.pidx,
         isProd: payConfig.environment == Environment.prod,
       ),
@@ -172,7 +182,6 @@ class KhaltiPayConfig extends Equatable {
   const KhaltiPayConfig({
     required this.publicKey,
     required this.pidx,
-    required this.returnUrl,
     this.openInKhalti = false,
     this.environment = Environment.prod,
   });
@@ -182,9 +191,6 @@ class KhaltiPayConfig extends Equatable {
 
   /// The Payment URL to redirect to be able to make payments.
   final String pidx;
-
-  /// The URL to redirect after payment is successful.
-  final Uri returnUrl;
 
   /// A boolean to determine whether to launch WebView or open in khalti app.
   final bool openInKhalti;
@@ -201,7 +207,6 @@ class KhaltiPayConfig extends Equatable {
     return [
       publicKey,
       pidx,
-      returnUrl,
       openInKhalti,
       environment,
     ];

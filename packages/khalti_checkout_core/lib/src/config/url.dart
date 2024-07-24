@@ -20,7 +20,12 @@ const String prodPaymentUrl = 'https://pay.khalti.com/';
 /// https://test-pay.khalti.com
 const String testPaymentUrl = 'https://test-pay.khalti.com/';
 
-/// Payment Status Verification API URL Path
+/// Payment Status Verification API URL
 ///
-/// epayment/lookup/
-const String transactionVerificationLookup = 'epayment/lookup/';
+/// epayment/lookup-sdk/
+const String transactionVerificationLookup = 'epayment/lookup-sdk/';
+
+/// API to fetch the `return_url`
+///
+/// epayment/detail/
+const String returnUrl = 'epayment/detail/';

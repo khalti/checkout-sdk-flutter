@@ -33,7 +33,7 @@ class KhaltiService {
   /// Checks the status of the payment.
   ///
   /// See: https://docs.khalti.com/khalti-epayment/#payment-verification-lookup
-  Future<PaymentVerificationResponseModel> verify(
+  Future<PaymentPayload> verify(
     String pidx, {
     bool isProd = true,
   }) async {
@@ -43,8 +43,20 @@ class KhaltiService {
     final response = await _client.post(url, {'pidx': pidx});
     return _handleError(
       response,
-      converter: PaymentVerificationResponseModel.fromJson,
+      converter: PaymentPayload.fromJson,
     );
+  }
+
+  /// Fetches details regarding payment that is to be made.
+  Future<PaymentDetailModel> fetchPaymentDetail(
+    String pidx, {
+    bool isProd = true,
+  }) async {
+    final url = _buildUrl(returnUrl, isProd: isProd);
+    final logger = _Logger('POST', url);
+    logger.request(pidx);
+    final response = await _client.post(url, {'pidx': pidx});
+    return _handleError(response, converter: PaymentDetailModel.fromJson);
   }
 
   T _handleError<T>(
