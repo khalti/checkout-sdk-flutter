@@ -1,3 +1,6 @@
+# [1.0.0-dev.7] - Nov 27, 2024
+- Update support section doc
+
 # [1.0.0-dev.6] - Nov 26, 2024
 - Update doc
 - Update deprecated usage of APIs
