@@ -2,14 +2,15 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
-/// `FutureOr<void> Function(bool didPop)`
-typedef PopInvokedCallback = FutureOr<void> Function(bool didPop);
+// ignore: avoid_positional_boolean_parameters
+/// `FutureOr<void> Function(bool, T?)`
+typedef PopInvokedWithResultCallback<T> = FutureOr<void> Function(bool, T?);
 
 /// `FutureOr<bool> Function()`
 typedef CanPopCallback = FutureOr<bool> Function();
 
 /// A wrapper around [PopScope] widget.
-class KhaltiPopScope extends StatelessWidget {
+class KhaltiPopScope<T> extends StatelessWidget {
   /// Constructor for [KhaltiPopScope].
   const KhaltiPopScope({
     super.key,
@@ -22,7 +23,7 @@ class KhaltiPopScope extends StatelessWidget {
   final Widget child;
 
   /// Callback that gets executed when the page is popped.
-  final PopInvokedCallback? onPopInvoked;
+  final PopInvokedWithResultCallback<T>? onPopInvoked;
 
   /// Callback that determines whether or not a page can be popped.
   final CanPopCallback? canPop;
@@ -35,9 +36,9 @@ class KhaltiPopScope extends StatelessWidget {
       return FutureBuilder<bool>(
         future: isPoppable,
         builder: (_, canPop) {
-          return PopScope(
+          return PopScope<T>(
             canPop: canPop.data ?? true,
-            onPopInvoked: onPopInvoked,
+            onPopInvokedWithResult: onPopInvoked,
             child: child,
           );
         },
@@ -45,7 +46,7 @@ class KhaltiPopScope extends StatelessWidget {
     }
     return PopScope(
       canPop: isPoppable,
-      onPopInvoked: onPopInvoked,
+      onPopInvokedWithResult: onPopInvoked,
       child: child,
     );
   }

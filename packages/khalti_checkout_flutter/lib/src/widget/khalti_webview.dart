@@ -55,7 +55,9 @@ class _KhaltiWebViewState extends State<KhaltiWebView> {
           ValueListenableBuilder(
             valueListenable: showLinearProgressIndicator,
             builder: (_, showLoader, __) {
-              return showLoader ? const LinearProgressIndicator(color: Colors.deepPurple) : const SizedBox.shrink();
+              return showLoader
+                  ? const LinearProgressIndicator(color: Colors.deepPurple)
+                  : const SizedBox.shrink();
             },
           ),
           Expanded(
@@ -75,25 +77,31 @@ class _KhaltiWebViewState extends State<KhaltiWebView> {
                         builder: (context, snapshot) {
                           if (snapshot.hasData) {
                             return _KhaltiWebViewClient(
-                              showLinearProgressIndicator: showLinearProgressIndicator,
-                              webViewControllerCompleter: webViewControllerCompleter,
+                              showLinearProgressIndicator:
+                                  showLinearProgressIndicator,
+                              webViewControllerCompleter:
+                                  webViewControllerCompleter,
                               returnUrl: snapshot.data?.returnUrl,
                             );
                           } else if (snapshot.hasError) {
-                            Future.microtask(() => showLinearProgressIndicator.value = false);
+                            Future.microtask(() =>
+                                showLinearProgressIndicator.value = false);
                             return const _KhaltiError(
                               icon: Icon(Icons.error),
                               errorMessage: 'Unable to load return_url',
-                              errorDescription: "There was an error setting up your payment. Please try again later.",
+                              errorDescription:
+                                  "There was an error setting up your payment. Please try again later.",
                             );
                           }
                           return const SizedBox.shrink();
                         },
                       );
                     case InternetStatus.disconnected:
-                      Future.microtask(() => showLinearProgressIndicator.value = false);
+                      Future.microtask(
+                          () => showLinearProgressIndicator.value = false);
                       return const _KhaltiError(
-                        icon: Icon(Icons.signal_wifi_statusbar_connected_no_internet_4),
+                        icon: Icon(Icons
+                            .signal_wifi_statusbar_connected_no_internet_4),
                         errorMessage: s_noInternet,
                         errorDescription: s_noInternetDisplayMessage,
                       );
@@ -132,11 +140,13 @@ class _KhaltiWebViewClient extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final khalti = context.findAncestorWidgetOfExactType<KhaltiWebView>()!.khalti;
+    final khalti =
+        context.findAncestorWidgetOfExactType<KhaltiWebView>()!.khalti;
     final payConfig = khalti.payConfig;
     final isProd = payConfig.environment == Environment.prod;
     return KhaltiPopScope(
-      onPopInvoked: (_) {
+      onPopInvoked: (didPop, _) async {
+        if (didPop) return;
         Khalti.hasPopped = true;
         return khalti.onMessage(
           event: KhaltiEvent.kpgDisposed,
@@ -166,7 +176,8 @@ class _KhaltiWebViewClient extends StatelessWidget {
           }
         },
         onReceivedError: (_, webResourceRequest, error) async {
-          if (returnUrl.isNotNullAndNotEmpty && webResourceRequest.url.toString().contains(returnUrl!)) {
+          if (returnUrl.isNotNullAndNotEmpty &&
+              webResourceRequest.url.toString().contains(returnUrl!)) {
             showLinearProgressIndicator.value = false;
             return khalti.onMessage(
               description: error.description,
@@ -177,7 +188,8 @@ class _KhaltiWebViewClient extends StatelessWidget {
           }
         },
         onReceivedHttpError: (_, webResourceRequest, response) async {
-          if (returnUrl.isNotNullAndNotEmpty && webResourceRequest.url.toString().contains(returnUrl!)) {
+          if (returnUrl.isNotNullAndNotEmpty &&
+              webResourceRequest.url.toString().contains(returnUrl!)) {
             showLinearProgressIndicator.value = false;
             return khalti.onMessage(
               statusCode: response.statusCode,
