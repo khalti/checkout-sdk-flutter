@@ -1,3 +1,7 @@
+# [1.0.0-dev.6] - Nov 26, 2024
+- Update doc
+- Update deprecated usage of APIs
+
 # [1.0.0-dev.5] - Jul 24, 2024
 **Pre-release**
 - **BREAKING**: Implement enhanced functionality allowing the SDK to autonomously fetch the `return_url`. This modification eliminates the requirement for developers to manually specify the `return_url` within the `KhaltiPayConfig` instance.
