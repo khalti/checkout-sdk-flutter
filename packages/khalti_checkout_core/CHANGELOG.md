@@ -1,3 +1,7 @@
+# [1.0.0-dev.5] - Feb 10, 2025
+**Pre-release**
+- Update versions for the dependencies used
+
 # [1.0.0-dev.4] - Jul 24, 2024
 **Pre-release**
 - Add a new model `PaymentDetailModel` that holds the `return_url`
