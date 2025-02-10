@@ -1,3 +1,6 @@
+# [1.0.0-dev.8] - Feb 10, 2025
+- Update versions for the dependencies used
+
 # [1.0.0-dev.7] - Nov 27, 2024
 - Update support section doc
 
