@@ -42,6 +42,7 @@ class _KhaltiWebViewState extends State<KhaltiWebView> {
           ? null
           : AppBar(
               title: const Text(s_payWithKhalti),
+              backgroundColor: Color(0xFFE8F0F7),
               actions: [
                 IconButton(
                   onPressed: _reload,
@@ -56,7 +57,7 @@ class _KhaltiWebViewState extends State<KhaltiWebView> {
             valueListenable: showLinearProgressIndicator,
             builder: (_, showLoader, __) {
               return showLoader
-                  ? const LinearProgressIndicator(color: Colors.deepPurple)
+                  ? const LinearProgressIndicator(color: Color(0xFF3574B8))
                   : const SizedBox.shrink();
             },
           ),
