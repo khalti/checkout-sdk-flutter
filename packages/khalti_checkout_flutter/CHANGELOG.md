@@ -1,3 +1,6 @@
+# [1.0.0-dev.9] - Jul 27, 2025
+- Update branding and colors for Khalti by IME
+
 # [1.0.0-dev.8] - Feb 10, 2025
 - Update versions for the dependencies used
 
