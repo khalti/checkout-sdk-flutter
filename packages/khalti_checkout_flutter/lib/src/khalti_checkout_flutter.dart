@@ -140,15 +140,17 @@ class Khalti extends Equatable {
 
   /// Helper method to call payment detail fetching API.
   Future<PaymentDetailModel> fetchPaymentDetail() async {
-    return handleFetchDetailException(
-      caller: () => service.fetchPaymentDetail(
-        payConfig.pidx,
-        isProd: payConfig.environment == Environment.prod,
-      ),
-      onMessage: onMessage,
-      onPaymentResult: onPaymentResult,
-      khalti: this,
-    );
+    final paymentUri = Uri.tryParse(payConfig.paymentUrl);
+    if(paymentUri == null){
+      return PaymentDetailModel(returnUrl: null);
+    }
+
+    final returnUrl = paymentUri.queryParameters['return_url'];
+    if(returnUrl == null){
+      return PaymentDetailModel(returnUrl: null);
+    }
+
+    return PaymentDetailModel(returnUrl: returnUrl);
   }
 
   /// Helper method to close the webview.
