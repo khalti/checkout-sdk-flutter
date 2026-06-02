@@ -209,11 +209,7 @@ class _KhaltiWebViewClient extends StatelessWidget {
           cacheMode: CacheMode.LOAD_NO_CACHE,
         ),
         initialUrlRequest: URLRequest(
-          url: WebUri.uri(
-            Uri.parse(isProd ? prodPaymentUrl : testPaymentUrl).replace(
-              queryParameters: {'pidx': payConfig.pidx},
-            ),
-          ),
+          url: WebUri.uri(Uri.parse(payConfig.paymentUrl)),
         ),
         onProgressChanged: (_, progress) {
           if (progress == 100) showLinearProgressIndicator.value = false;
