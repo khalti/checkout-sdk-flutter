@@ -140,15 +140,17 @@ class Khalti extends Equatable {
 
   /// Helper method to call payment detail fetching API.
   Future<PaymentDetailModel> fetchPaymentDetail() async {
-    return handleFetchDetailException(
-      caller: () => service.fetchPaymentDetail(
-        payConfig.pidx,
-        isProd: payConfig.environment == Environment.prod,
-      ),
-      onMessage: onMessage,
-      onPaymentResult: onPaymentResult,
-      khalti: this,
-    );
+    final paymentUri = Uri.tryParse(payConfig.paymentUrl);
+    if(paymentUri == null){
+      return PaymentDetailModel(returnUrl: null);
+    }
+
+    final returnUrl = paymentUri.queryParameters['return_url'];
+    if(returnUrl == null){
+      return PaymentDetailModel(returnUrl: null);
+    }
+
+    return PaymentDetailModel(returnUrl: returnUrl);
   }
 
   /// Helper method to close the webview.
@@ -182,6 +184,7 @@ class KhaltiPayConfig extends Equatable {
   const KhaltiPayConfig({
     required this.publicKey,
     required this.pidx,
+    required this.paymentUrl,
     this.openInKhalti = false,
     this.environment = Environment.prod,
   });
@@ -189,7 +192,7 @@ class KhaltiPayConfig extends Equatable {
   /// Public Key
   final String publicKey;
 
-  /// The Payment URL to redirect to be able to make payments.
+  /// Payment unique identifier
   final String pidx;
 
   /// A boolean to determine whether to launch WebView or open in khalti app.
@@ -202,6 +205,9 @@ class KhaltiPayConfig extends Equatable {
   /// Defaults to `prod`.
   final Environment environment;
 
+  /// Payment URL to redirect for making payments
+  final String paymentUrl;
+
   @override
   List<Object?> get props {
     return [
@@ -209,6 +215,7 @@ class KhaltiPayConfig extends Equatable {
       pidx,
       openInKhalti,
       environment,
+      paymentUrl,
     ];
   }
 }

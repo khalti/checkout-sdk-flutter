@@ -1,3 +1,8 @@
+# [1.0.1] - Jun 05, 2026
+- Accept `paymentUrl` during SDK initialization and use it directly for webview loading
+- Derive `returnUrl` from `paymentUrl` instead of making an additional API call
+- Update Gradle version in example app
+
 # [1.0.0-dev.9] - Jul 27, 2025
 - Update branding and colors for Khalti by IME
 
