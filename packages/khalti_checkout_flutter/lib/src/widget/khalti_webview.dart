@@ -42,14 +42,13 @@ class _KhaltiWebViewState extends State<KhaltiWebView> {
           ? null
           : AppBar(
               title: const Text(s_payWithKhalti),
-              backgroundColor: Color(0xFFE8F0F7),
               actions: [
                 IconButton(
                   onPressed: _reload,
                   icon: const Icon(Icons.refresh),
                 )
               ],
-              elevation: 4,
+              elevation: 0,
             ),
       body: Column(
         children: [
