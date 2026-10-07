@@ -147,6 +147,7 @@ class _KhaltiWebViewClient extends StatelessWidget {
     final isProd = payConfig.environment == Environment.prod;
     return KhaltiPopScope(
       onPopInvoked: (didPop, _) async {
+        Khalti.isWebViewActive = false;
         if (didPop) return;
         Khalti.hasPopped = true;
         return khalti.onMessage(
