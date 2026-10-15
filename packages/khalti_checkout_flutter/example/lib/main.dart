@@ -19,29 +19,42 @@ class KhaltiSDKDemo extends StatefulWidget {
 }
 
 class _KhaltiSDKDemoState extends State<KhaltiSDKDemo> {
-  late final Future<Khalti?> khalti;
-
-  String pidx = 'oBJufDowFtq4vzfDv2GdJ9'; // Should be generated via a server-side POST request.
+  final _formKey = GlobalKey<FormState>();
+  final _paymentUrlController = TextEditingController();
 
   PaymentResult? paymentResult;
 
-  @override
-  void initState() {
-    super.initState();
-    final payConfig = KhaltiPayConfig(
-      publicKey: '4aa1b684f4de4860968552558fc8487d', // This is a dummy public key for example purpose
-      pidx: pidx,
-      environment: Environment.test,
-      paymentUrl: 'https://test-pay.khalti.com/?pidx=oBJufDowFtq4vzfDv2GdJ9&return_url=https%3A%2F%2Fdocs.khalti.com%2Fkhalti-epayment&mode=wallet',
-    );
+  /// Last non-payment outcome reported through `onMessage` (cancelled, expired, error...).
+  String? message;
 
-    khalti = Khalti.init(
+  @override
+  void dispose() {
+    _paymentUrlController.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pay() async {
+    if (!_formKey.currentState!.validate()) return;
+
+    final paymentUrl = _paymentUrlController.text.trim();
+    setState(() {
+      paymentResult = null;
+      message = null;
+    });
+
+    final khalti = await Khalti.init(
       enableDebugging: true,
-      payConfig: payConfig,
+      payConfig: KhaltiPayConfig(
+        publicKey:
+            '4aa1b684f4de4860968552558fc8487d', // This is a dummy public key for example purpose
+        environment: _environmentOf(paymentUrl),
+        paymentUrl: paymentUrl,
+      ),
       onPaymentResult: (paymentResult, khalti) {
         log(paymentResult.toString());
         setState(() {
           this.paymentResult = paymentResult;
+          message = null;
         });
         khalti.close(context);
       },
@@ -55,72 +68,122 @@ class _KhaltiSDKDemoState extends State<KhaltiSDKDemo> {
         log(
           'Description: $description, Status Code: $statusCode, Event: $event, NeedsPaymentConfirmation: $needsPaymentConfirmation',
         );
+        setState(() {
+          paymentResult = null;
+          message = 'Event: $event\n'
+              'Description: ${_shorten(description)}\n'
+              'Status Code: $statusCode\n'
+              'Needs Payment Confirmation: $needsPaymentConfirmation';
+        });
         khalti.close(context);
       },
       onReturn: () => log('Successfully redirected to return_url.'),
     );
+
+    if (!mounted) return;
+    await khalti.open(context);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Center(
-        child: FutureBuilder(
-          future: khalti,
-          initialData: null,
-          builder: (context, snapshot) {
-            final khaltiSnapshot = snapshot.data;
-            if (khaltiSnapshot == null) {
-              return const CircularProgressIndicator.adaptive();
-            }
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
+      body: SafeArea(
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.all(24),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
+                const SizedBox(height: 24),
                 Image.asset(
                   'assets/seru.png',
-                  height: 200,
-                  width: 200,
+                  height: 160,
+                  width: 160,
                 ),
-                const SizedBox(height: 120),
-                const Text(
-                  'Rs. 22',
-                  style: TextStyle(fontSize: 25),
+                const SizedBox(height: 32),
+                TextFormField(
+                  controller: _paymentUrlController,
+                  keyboardType: TextInputType.url,
+                  autocorrect: false,
+                  textInputAction: TextInputAction.done,
+                  decoration: const InputDecoration(
+                    labelText: 'Payment URL',
+                    hintText: 'https://test-pay.khalti.com/?pidx=...',
+                    helperText:
+                        'The payment_url received after initiating the payment.',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: _validatePaymentUrl,
+                  onFieldSubmitted: (_) => _pay(),
                 ),
-                const Text('1 day fee'),
+                const SizedBox(height: 16),
                 OutlinedButton(
-                  onPressed: () => khaltiSnapshot.open(context),
+                  onPressed: _pay,
                   child: const Text('Pay with Khalti'),
                 ),
-                const SizedBox(height: 120),
-                paymentResult == null
-                    ? Text(
-                        'pidx: $pidx',
-                        style: const TextStyle(fontSize: 15),
-                      )
-                    : Column(
-                        children: [
-                          Text(
-                            'pidx: ${paymentResult!.payload?.pidx}',
-                          ),
-                          Text('Status: ${paymentResult!.payload?.status}'),
-                          Text(
-                            'Amount Paid: ${paymentResult!.payload?.totalAmount}',
-                          ),
-                          Text(
-                            'Transaction ID: ${paymentResult!.payload?.transactionId}',
-                          ),
-                        ],
+                const SizedBox(height: 32),
+                if (message != null)
+                  Text(
+                    message!,
+                    textAlign: TextAlign.center,
+                    style: const TextStyle(fontSize: 15, color: Colors.red),
+                  )
+                else if (paymentResult != null)
+                  Column(
+                    children: [
+                      Text('pidx: ${paymentResult!.payload?.pidx}'),
+                      Text('Status: ${paymentResult!.payload?.status}'),
+                      Text(
+                        'Amount Paid: ${paymentResult!.payload?.totalAmount}',
                       ),
-                const SizedBox(height: 120),
+                      Text(
+                        'Transaction ID: ${paymentResult!.payload?.transactionId}',
+                      ),
+                    ],
+                  ),
+                const SizedBox(height: 32),
                 const Text(
                   'This is a demo application developed by some merchant.',
+                  textAlign: TextAlign.center,
                   style: TextStyle(fontSize: 12),
-                )
+                ),
               ],
-            );
-          },
+            ),
+          ),
         ),
       ),
     );
   }
+}
+
+/// Validates that the input is an http(s) URL carrying a non-empty `pidx`,
+/// which is what the SDK reads the payment identifier from.
+String? _validatePaymentUrl(String? value) {
+  final input = value?.trim() ?? '';
+  if (input.isEmpty) return 'Enter the payment URL';
+
+  final uri = Uri.tryParse(input);
+  if (uri == null ||
+      !uri.hasScheme ||
+      !uri.isScheme('https') && !uri.isScheme('http')) {
+    return 'Enter a valid URL';
+  }
+
+  if ((uri.queryParameters['pidx'] ?? '').isEmpty) {
+    return 'The URL has no pidx';
+  }
+  return null;
+}
+
+/// Payment URLs on the test host run against the test environment.
+Environment _environmentOf(String paymentUrl) {
+  final host = Uri.tryParse(paymentUrl)?.host ?? '';
+  return host.startsWith('test-') ? Environment.test : Environment.prod;
+}
+
+/// Keeps long descriptions (e.g. an HTML error page) from filling the screen.
+String _shorten(Object? description, {int max = 120}) {
+  final text = description.toString().replaceAll(RegExp(r'\s+'), ' ').trim();
+  return text.length <= max ? text : '${text.substring(0, max)}...';
 }

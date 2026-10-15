@@ -1,3 +1,20 @@
+# [2.0.0-beta.1] - Oct 15, 2026
+**Pre-release**
+
+**Breaking changes**
+- Remove `pidx` from `KhaltiPayConfig`. It is now read from the `pidx` query parameter of `paymentUrl`, and `Khalti.init` throws an `ArgumentError` if it is missing
+- `Khalti.open` now tries the Khalti app first (Android and iOS) and only falls back to the webview if it isn't installed
+- `Khalti.open` now returns `Future<void>` instead of `void`
+- Add `KhaltiEvent.cancelled`, `KhaltiEvent.paymentExpired` and `KhaltiEvent.kpgLoadFailure`, reported through `onMessage` when paying via the Khalti app. Exhaustive `switch` statements on `KhaltiEvent` need updating
+- The package now ships an Android plugin (new native module with `androidx.activity` and Kotlin coroutines dependencies). The minimum supported Android SDK version is 24
+
+**Changes**
+- Android: launch the Khalti app and map its result (paid, already paid, expired, cancelled, error) to `onPaymentResult` or `onMessage`
+- iOS: open the Khalti app through its universal link, falling back to the `khalti://` scheme, and verify the payment when the user returns to the app
+- `Khalti.close` does nothing when the payment is made in the Khalti app, since no page is pushed
+- Update the README with the new flow, the callback outcomes and a migration guide
+- Example app takes the payment URL from a text field and shows non-success outcomes
+
 # [1.0.1] - Jun 05, 2026
 - Accept `paymentUrl` during SDK initialization and use it directly for webview loading
 - Derive `returnUrl` from `paymentUrl` instead of making an additional API call

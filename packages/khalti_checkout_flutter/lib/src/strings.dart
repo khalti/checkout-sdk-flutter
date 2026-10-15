@@ -12,3 +12,9 @@ const s_tryAgain = 'Try Again';
 
 /// Khalti payment page disposed
 const s_kpgDisposed = 'Khalti payment page disposed';
+
+/// Payment cancelled by the user
+const s_paymentCancelled = 'Payment cancelled by the user';
+
+/// Payment link expired
+const s_paymentExpired = 'Payment link expired';
